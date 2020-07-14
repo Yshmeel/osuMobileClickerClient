@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "osu_mobile_clicker",
-    "slug": "osu_mobile_clicker",
+    "name": "osu! mobile clicker",
+    "slug": "osu! mobile clicker",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -17,13 +17,15 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yshmeel.osuclicker"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "android": {
       "package": "com.yshmeel.osuclicker"
-    }
+    },
+    "entryPoint": "node_modules/expo/AppEntry.js"
   }
 }
