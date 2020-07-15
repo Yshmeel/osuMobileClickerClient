@@ -9,3 +9,7 @@
 
 **Installation**
 <p>- Download an APK on your smartphone, and install it. Then follow a instruction in app.</p>
+
+**Warning**
+<p>- osu! mobile clicker depends on ping between PC and smartphone, and it may cause a huge input lag.</p>
+<p style="font-size: 13px">no, i'm seriously, i have a f####ng input lag with my own app</p>

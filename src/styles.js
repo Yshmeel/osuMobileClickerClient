@@ -1,7 +1,7 @@
 module.exports = {
     container: {
         flex: 1,
-        paddingTop: 100,
+        paddingTop: 60,
         paddingLeft: 24,
         paddingRight: 24
     },
@@ -34,6 +34,9 @@ module.exports = {
     },
     buttonSuccess: {
         backgroundColor: "#1f822b",
+    },
+    buttonDanger: {
+        backgroundColor: "red",
     },
     buttonText: {
         color: "#fff",

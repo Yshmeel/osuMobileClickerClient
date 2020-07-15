@@ -1,6 +1,9 @@
 import React from 'react';
 import {SettingsContext} from "../../contexts/SettingsContext";
-import { View, Text, StyleSheet, TouchableHighlight, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TextInput } from 'react-native';
+import {
+    TouchableOpacity
+} from 'react-native-gesture-handler';
 import styles from '../../styles';
 import {Linking} from "expo/build/deprecated.web";
 import {
@@ -23,7 +26,7 @@ class Setup extends React.Component {
                 global: null
             },
             loading: false,
-            webSocketWork: true
+            webSocketWork: false
         };
     }
 
@@ -67,7 +70,8 @@ class Setup extends React.Component {
         let { ip, port } = this.state;
 
         this.setState({
-            loading: true
+            loading: true,
+            connectWebSocket: true
         });
 
         try {
@@ -76,12 +80,15 @@ class Setup extends React.Component {
                 return false;
             }
 
-            let webSocket = new WebSocket(`ws://${ip}:${port}`);
+            let webSocket = new WebSocket(`ws://${ip}:${port}/`);
 
             webSocket.onopen = (e) => {
+                console.log("Connect WebSocket = " + this.state.connectWebSocket);
+                if(!this.state.connectWebSocket) return false;
+                console.log("Connected to WebSocket");
                 this.setState({
                     loading: false,
-                    webSocketWork: true
+                    connectWebSocket: false
                 });
                 this.context.set("ip", this.state.ip);
                 this.context.set("port", this.state.port);
@@ -90,8 +97,23 @@ class Setup extends React.Component {
                 this.setGlobalError(null);
                 Actions.game();
             };
+
+            webSocket.onerror = (e) => {
+                console.log("Error on WebSocket");
+                console.error(e);
+                this.setGlobalError("Something went wrong, maybe try another IP address?\nError message: " + e.message);
+                this.setState({
+                    loading: false
+                });
+            };
+
+            webSocket.onclose = (e) => {
+                console.log("Close WebSocket");
+            }
+
         } catch(e) {
-            this.setGlobalError("Something went wrong, maybe try another IP address?");
+            console.error(e);
+            this.setGlobalError("Something went wrong, maybe try another IP address?\nError message: " + e.message);
             this.setState({
                 loading: false
             });
@@ -120,7 +142,7 @@ class Setup extends React.Component {
                                         <Text style={componentStyles.text}>Firstfully, you need to setup an Socket Server.</Text>
                                         <View style={componentStyles.texts}>
                                             <Text>You can download a server from</Text>
-                                            <TouchableHighlight onPress={() => {
+                                            <TouchableOpacity onPress={() => {
                                                 Linking.openURL("https://github.com/Yshmeel/osuMobileClickerServer");
                                             }}>
                                                 <Text style={{
@@ -128,7 +150,7 @@ class Setup extends React.Component {
                                                     color: "red",
                                                     fontSize: 14
                                                 }}>Github</Text>
-                                            </TouchableHighlight>
+                                            </TouchableOpacity>
                                         </View>
                                         <View style={componentStyles.texts}>
                                             <Text style={componentStyles.textRed}>IMPORTANT!</Text>
@@ -171,16 +193,28 @@ class Setup extends React.Component {
                                             )}
                                         </View>
                                         <View style={styles.formInput}>
-                                            <TouchableHighlight onPress={this.connect}>
+                                            <TouchableOpacity onPress={this.connect}>
                                                 <View style={{...styles.button, ...styles.buttonSuccess}}>
                                                     <Text style={styles.buttonText}>Connect</Text>
                                                 </View>
-                                            </TouchableHighlight>
+                                            </TouchableOpacity>
                                         </View>
                                     </View>
                                 </>
                             ) : (
-                                <Text>Now we are trying to connect your socket server...</Text>
+                                <>
+                                    <Text>Now we are trying to connect your socket server...</Text>
+                                    <TouchableOpacity onPress={() => {
+                                        this.setState({
+                                            loading: false,
+                                            connectWebSocket: false
+                                        })
+                                    }}>
+                                        <View style={{...styles.button, ...styles.buttonDanger, marginTop: 10}}>
+                                            <Text style={styles.buttonText}>Cancel</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </>
                             )}
                         </View>
                     )
@@ -199,7 +233,7 @@ const componentStyles = StyleSheet.create({
         fontFamily: "fira-sans-bold"
     },
     settingsReadme: {
-        marginTop: 15
+        marginTop: 10
     },
     text: {
         fontSize: 14,
@@ -216,7 +250,7 @@ const componentStyles = StyleSheet.create({
         marginLeft: 3
     },
     settingsForm: {
-        marginTop: 10
+        marginTop: 30
     },
     globalError: {
         color: "red",

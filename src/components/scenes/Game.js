@@ -13,6 +13,7 @@ import {
 class Game extends React.Component {
     constructor(props) {
         super(props);
+
     }
 
     onPress(keyId) {
@@ -21,7 +22,6 @@ class Game extends React.Component {
         socketConnection.send(JSON.stringify({
             event: "key_press_" + keyId
         }))
-        Vibration.vibrate(1, false);
     }
 
     onRelease(keyId) {
@@ -39,7 +39,7 @@ class Game extends React.Component {
                     return (
                         <View style={{
                             ...styles.container,
-                            paddingTop: 40
+                            paddingTop: 20
                         }}>
                             <Text style={componentStyles.title}>osu! mobile clicker: Buttons</Text>
                             <View style={{
